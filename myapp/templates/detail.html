@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6">
+{{post.title}}<br>
+<img src= "{{post.image.url}}" height="300" width="300"><br>
+<br>{{post.description}}<br><br><span id="demo">{{post.likes}} likes</span><button onclick ="onClick()">Like</button>
+<script src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script type="text/javascript">
+	function onClick(){
+		$.ajax({
+			url:"{% url 'myapp:like' %}"
+			data:{'i':{{post.pk}}},
+			success:function(data){
+				document.getElementById('demo').innerHTML=data.i+'likes'
+			 }
+
+		})
+	}
+	
+</script><br>
+Created at:{{post.created_time}}<br> by {{post.user}}<br>
+Updated at:{{post.updated_time}}<br>
+</div>
+<br><br>
+<div class="col-md-6">
+<form action="" method="post">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <input class="btn btn-primary" type="submit" value="Submit">
+</form>
+</div>
+</div>
+<br>
+{% if comments %}
+{% for i in comments %}
+{{forloop.counter}}.{{i.comment}}<br>
+@{{i.created_time}} by <b>{{i.user}}</b><br>
+{% endfor %}
+{% endif %}
+
+{% endblock %}
